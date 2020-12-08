@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8"/>
+  <script type="application/javascript">
+  var TamanhoiLvl=0;
+  var TamanhojLvl=0;
+  var qtdCores =23;//TamanhoiLvl;//21
+  var ListaCores = ['yellow','green','blue','red','orange','pink','purple','brown','black','coral ','crimson',
+                    'gold','indigo','lime', 'magenta' ,'maroon','plum','salmon','silver','teal','violet',
+                    'darkGoldenrod','deepSkyBlue'];
+  var corInicial;
+  var pontos=0;
+  //Player 1
+  var posicaoxP1=75;//Posicao Fisica P1
+  var posicaoyP1=105;//Posicao Fisica P1
+  var posicaoP1 =0;//Posi��o Cor Player 1
+  //player 2
+  var posicaoxP2=175;//Posicao Fisica P1
+  var posicaoyP2=205;//Posicao Fisica P1
+  var posicaoP2=3;//Posi��o Cor Player 1
+  //Declara��o Jogo
+  var tempo=0;
+  var count = new Number();
+  var count=20;
+  var comecou=false;
+  var terminou=true;
+  var cores = [];
+  var pos_texto=0;
+  var ajusteQuadro=50;
+  var tela = 0;
+  var game;
+  var modo;
+  var passo = ["BonecoParado.png", "BonecoAndando1.png", "BonecoAndando2.png","BonecoAndando3.png","BonecoAndando4.png","BonecoAndando5.png"]
+  var contadorPasso=0;
+ var tamanho;
+ var tamanhoDoBonecoy=50;
+ var tamanhoDoBonecox=50;
+  function init() {
+    
+    animacao();
+  }
+ 
+
+function a0(){
+  canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+     ctx.beginPath();
+    var img = new Image();
+    img.src = passo[contadorPasso] ;
+    img.onload = function(){
+      ctx.drawImage(img,100,100,60,120);
+}
+}
+
+  var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    ctx.beginPath();
+    var img = new Image();
+    img.src = passo[contadorPasso++] ;
+    img.onload = function(){
+      ctx.drawImage(img,100,100,tamanhoDoBonecox,tamanhoDoBonecoy);
+}
+
+
+function animacao(){
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    contadorPasso+=1;
+ console.log("andando "+contadorPasso);
+
+     a0()
+      setTimeout('animacao();',400);
+
+    if(contadorPasso>=5)
+      contadorPasso=0;
+
+  }
+
+ 
+
+  function player1(){
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    ctx.beginPath();
+    var img = new Image();
+    img.src = "boneco.png" ;
+    img.onload = function(){
+      ctx.drawImage(img,posicaoxP1-25,posicaoyP1+30,50,50);
+    }
+  }
+ 
+  function player2(){
+    
+  }
+
+  function start(){
+
+    posicaoxP1=75;
+    posicaoyP1=105;
+    posicaoP1=0;
+    posicaoxP2=75;
+    posicaoyP2=105;
+    posicaoP2=0;
+
+    if(TamanhoiLvl*TamanhojLvl>21)
+      qtdCorAtual=23;
+    else
+      qtdCorAtual = TamanhoiLvl*TamanhojLvl;
+
+    corInicial = cores[Math.floor(Math.random()*qtdCorAtual)];//Instancia a cor inicial para ser encontrada
+   
+    texto();//Desenha Textos
+    atualizaTempo();//Atualiza o tempo com valida��es 
+  }
+
+  function atualizaTempo(){
+  //Verifica se tempo acabou se n�o, ele atualiza o tempo, se acabou ele chama a pontua��o
+    if((count - 1)>=0){     
+      count = count -1;
+      tempo=count;
+      setTimeout('atualizaTempo();',500);
+    }else{
+      pontuacao();
+    }
+  }
+
+  function desenharPlayer1(){
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    ctx.beginPath()
+    var img = new Image();
+    img.src = "boneco.png" ;
+    img.onload = function(){
+      ctx.drawImage(img,195,5,50,60);
+    }
+  }
+
+  function desenharPlayer2(){
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    ctx.beginPath()
+    var img = new Image();
+    img.src = "boneco2.png" ;
+    img.onload = function(){
+      ctx.drawImage(img,950,5,50,60);
+    }
+  }
+  
+  function texto(){
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    if(game!="pausado"){
+     ctx.clearRect(250,0,700,95);
+    ctx.clearRect(0,0,135,95);
+    ctx.clearRect(1100,0,170,80);
+   
+    }
+    
+    //Asa Esquerda
+    ctx.beginPath();
+    var lingrad = ctx.createLinearGradient(0, 0, 0, 650);
+    lingrad.addColorStop(1, 'rgb(0, 0, 0, 0.5)');
+    lingrad.addColorStop(0.3, 'rgb(0, 0, 0)');
+    lingrad.addColorStop(0, cores[posicaoP1]);
+    ctx.fillStyle = lingrad;
+    ctx.strokeStyle = "black";
+    ctx.moveTo(600,20);
+    ctx.lineTo(300,20);
+    ctx.lineTo(250,65);
+    ctx.lineTo(600,65);
+    ctx.lineTo(600,20);
+    ctx.fill();
+    ctx.stroke();
+     
+    //Asa direita
+    ctx.beginPath();
+    ctx.fillStyle = lingrad;
+    desenharPlayer1();
+          
+    var lingrad = ctx.createLinearGradient(0, 0, 0, 650);
+    lingrad.addColorStop(1, 'rgb(0, 0, 0, 0.5)');
+    lingrad.addColorStop(0.3, 'rgb(0, 0, 0)');
+    if(modo=="normal")
+      lingrad.addColorStop(0, corInicial);
+    else{
+      lingrad.addColorStop(0, cores[posicaoP2]);
+      desenharPlayer2();
+    }
+    ctx.fillStyle = lingrad;
+    ctx.fillStyle = lingrad;
+
+    ctx.moveTo(600,20);
+    ctx.lineTo(900,20);
+    ctx.lineTo(950,65);
+    ctx.lineTo(600,65);
+    ctx.lineTo(600,20);
+    ctx.fill();
+    ctx.stroke();
+
+    //Desenhando o circulo para escolher a cor
+    ctx.beginPath();
+    ctx.fillStyle = 'black';
+    ctx.arc (600, 40, 35, 0, Math.PI*2, false);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.beginPath();
+    var lingrad = ctx.createLinearGradient(0, 0, 0, 650);
+    lingrad.addColorStop(1, 'rgb(0, 0, 0, 0.5)');
+    lingrad.addColorStop(0, corInicial);
+    ctx.fillStyle = lingrad;
+    
+    ctx.arc (600, 40, 30, 0, Math.PI*2, false);
+    ctx.fill();
+    ctx.stroke();
+    
+    //Fim
+    if(modo=="normal"){
+      //Escrevendo ps textos
+      ctx.beginPath();
+      ctx.fillStyle = "black"; 
+      ctx.strokeStyle = 'rgb(255, 255, 255, 0.7)';
+      ctx.font = '21px fantasy';
+     
+      ctx.fillText("    Encontre a cor ",530,93);
+      ctx.strokeText("    Encontre a cor ",530,93);
+
+      ctx.beginPath();
+      ctx.font = '40px fantasy';
+      ctx.fillText("Tempo",20,40);
+      ctx.fillText(Math.trunc(tempo/2),60,80);
+           ctx.fillText(" Pontos: " + pontos,1110,50);
+
+      ctx.beginPath();
+      ctx.font = '40.0001px fantasy';
+      ctx.strokeText("Tempo",20,40);
+      ctx.strokeText(Math.trunc(tempo/2),60,80);
+      ctx.strokeText(" Pontos: " + pontos,1110,50);
+
+      ctx.beginPath();
+      ctx.font = '21px fantasy';
+      ctx.fillStyle = "black";
+      ctx.fillText("ENCONTRADA: "+ cores[posicaoP1] ,290,50);
+
+      ctx.beginPath();
+      ctx.strokeStyle = "white";
+      ctx.font = '21px fantasy';
+      ctx.strokeText("ENCONTRADA: "+ cores[posicaoP1] ,290,50);
+      ctx.fillText("ENCONTRAR: "+ corInicial ,640,50);
+      
+      ctx.beginPath();
+      ctx.strokeStyle = "white";
+      ctx.font = '21px fantasy';
+      ctx.strokeText("ENCONTRAR: "+ corInicial ,640,50);
+    }else{
+      //Escrevendo ps textos
+      ctx.beginPath();
+      ctx.fillStyle = "black"; 
+      ctx.strokeStyle = 'rgb(255, 255, 255, 0.7)';
+      ctx.font = '21px fantasy';
+     
+      ctx.fillText("    Encontre a cor ",530,93);
+      ctx.strokeText("    Encontre a cor ",530,93);
+       
+
+      ctx.beginPath();
+      ctx.font = '40px fantasy';
+      ctx.fillText("Tempo",20,40);
+      ctx.fillText(Math.trunc(tempo/2),60,80);
+      ctx.fillText(" N�vel: " + pontos,1110,50);
+
+      ctx.beginPath();
+      ctx.font = '40.0001px fantasy';
+      ctx.strokeText("Tempo",20,40);
+      ctx.strokeText(Math.trunc(tempo/2),60,80);
+      ctx.strokeText(" N�vel: " + pontos,1110,50);
+
+      
+      ctx.beginPath();
+      ctx.font = '21px fantasy';
+      ctx.fillStyle = "black";
+      ctx.fillText("Jogador 1: "+ cores[posicaoP1] ,290,50);
+    
+      ctx.beginPath();
+      ctx.strokeStyle = "white";
+      ctx.font = '21px fantasy';
+      ctx.strokeText("Jogador 1: "+ cores[posicaoP1] ,290,50);
+      ctx.fillText("Jogador 2: "+ cores[posicaoP2] ,640,50);
+      
+      ctx.beginPath();
+      ctx.strokeStyle = "white";
+      ctx.font = '21px fantasy';
+      ctx.strokeText("Jogador 2: "+ cores[posicaoP2] ,640,50);
+    }
+    setTimeout('texto();',100);
+  }
+
+  function botoes(){
+    //Desenho dos Bot�es
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    ctx.beginPath();
+    ctx.arc (1200, 470, 25, 0, Math.PI*2, false);
+    ctx.strokeStyle  =  ListaCores[Math.floor(Math.random()*22)];
+    ctx.fillStyle = 'black';
+    ctx.fill();
+    ctx.stroke();
+     
+    ctx.beginPath();
+    ctx.arc (1160, 510, 25, 0, Math.PI*2, false);
+    ctx.strokeStyle  =  ListaCores[Math.floor(Math.random()*22)];
+    ctx.fillStyle = 'black';
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.arc (1240, 510, 25, 0, Math.PI*2, false);
+    ctx.strokeStyle  =  ListaCores[Math.floor(Math.random()*22)];
+    ctx.fillStyle = 'black';
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.arc (1200, 550, 25, 0, Math.PI*2, false);
+    ctx.strokeStyle  =  ListaCores[Math.floor(Math.random()*22)];
+    ctx.fillStyle = 'black';
+    ctx.fill();
+    ctx.stroke();
+
+    //Cima
+    ctx.strokeStyle  =  ListaCores[Math.floor(Math.random()*22)];
+    ctx.beginPath();
+    ctx.fillStyle = "white";
+    ctx.moveTo(1200,450);
+    ctx.lineTo(1220,480);
+    ctx.moveTo(1200,450);
+    ctx.lineTo(1180,480);
+    ctx.fill();
+    ctx.stroke();
+    
+    //esquerda
+    ctx.beginPath();
+    ctx.fillStyle = "white";
+    ctx.moveTo(1140,510);
+    ctx.lineTo(1175,495);
+    ctx.moveTo(1140,510);
+    ctx.lineTo(1175,525);
+    ctx.fill();
+    ctx.stroke();
+    
+    //baixo
+    ctx.beginPath();
+    ctx.fillStyle = "white";
+    ctx.moveTo(1220,540);
+    ctx.lineTo(1200,570);
+    ctx.moveTo(1180,540);
+    ctx.lineTo(1200,570);
+    ctx.fill();
+    ctx.stroke();
+
+    //direita
+    ctx.beginPath();
+    ctx.fillStyle = "white";
+    ctx.moveTo(1260,510);
+    ctx.lineTo(1225,495);
+    ctx.moveTo(1260,510);
+    ctx.lineTo(1225,525);
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  function click(evt){
+    if(comecou == true){
+      if(evt.x >=1180 && evt.x <=1230){
+        if(evt.y >=450 && evt.y <=500){
+        AndarCima();
+        }
+      }
+      if(evt.x >=1180 && evt.x <=1230){
+        if(evt.y >=530 && evt.y <=580){
+          AndarBaixo();
+        }
+      }
+      if(evt.x >=1140 && evt.x <=1190){
+        if(evt.y >=490 && evt.y <=540){
+          AndarEsquerda();
+        }
+      }
+      if(evt.x >=1220 && evt.x <=1270){
+        if(evt.y >=490 && evt.y <=540){
+          AndarDireita();
+        }
+      }
+    }   
+  }
+
+  function zerarValores(){
+    TamanhoiLvl=0;
+    TamanhojLvl=0;
+    pontos=0;
+    posicaoxP1=75;
+    posicaoyP1=105;
+    posicaoP1 =0;
+    //player 2
+    posicaoxP2=175;//Posicao Fisica P1
+    posicaoyP2=205;//Posicao Fisica P1
+    posicaoP2=3;//Posi��o Cor Player 1
+    tempo=0;
+    count = new Number();
+    count=20;
+    comecou=false;
+    terminou=true;
+    cores = [];
+    pos_texto=0;
+    ajusteQuadro=50;
+    tela = 0;
+    game="pausado";
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    ctx.beginPath();
+    ctx.clearRect(0,0,canvas.width,canvas.height); 
+  }
+
+  function zerarCores(){
+    //Limpa o quadro de cores
+    while(cores.length) {
+      cores.pop();
+    }
+  }
+
+  function mensagemAcerto(){
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    ctx.beginPath();
+    var lingrad = ctx.createLinearGradient(0, 0, 0, 650);
+    lingrad.addColorStop(1, 'rgb(0, 0, 0, 0.5)');
+    lingrad.addColorStop(0.8, 'rgb(255, 255, 255)');
+    lingrad.addColorStop(0, 'white');
+    ctx.fillStyle = lingrad;
+    ctx.font = '30px fantasy';
+    ctx.fillText("Cor encontrada... Aguarde proxima cor",515,300);
+    ctx.strokeStyle = 'rgb(0,0,0)';
+    ctx.strokeText("Cor encontrada... Aguarde proxima cor",515,300);
+  }
+
+  function pontuacao(){
+    comecou=false;
+   
+    RenderPerdeu();
+    
+    if(modo=="normal"){
+      if(corInicial == cores[posicaoP1]){//O tempo acabou, se a cor encontrada � igual a esperada ele pontua
+          mensagemAcerto();
+          pontos++;
+          corInicial = cores[Math.floor(Math.random()*qtdCores)];
+          zerarCores();
+         
+          window.setTimeout("jogo()",2000);
+          game="pausado";
+      } else{
+          terminou=true;
+          tela = 1;
+          menu_perdeu();
+        }
+        
+    }else if(modo=="multiplayer"){
+      if(corInicial == cores[posicaoP1] && corInicial == cores[posicaoP2]){//O tempo acabou, se a cor encontrada � igual a esperada ele pontua
+        mensagemAcerto();
+        pontos++;
+        corInicial = cores[Math.floor(Math.random()*qtdCores)];
+        zerarCores();
+        
+        window.setTimeout("jogo()",2000);
+        game="pausado";
+      }else if(corInicial == cores[posicaoP1] && corInicial != cores[posicaoP2]){
+        terminou=true;
+        tela = 1;
+        menu_Final_multiplayer(1);
+      }else if(corInicial != cores[posicaoP1] && corInicial == cores[posicaoP2]){
+        terminou=true;
+        tela = 1;
+        menu_Final_multiplayer(2);        
+      }else{
+        terminou=true;
+        tela = 1;
+        menu_Final_multiplayer(0); 
+      }
+    }
+  }
+ 
+  function dificuldade(){
+    if(pontos<2){
+      console.log("Pontos <= 2");
+      count=tempo = 10;
+      TamanhoiLvl=2;
+      TamanhojLvl=2;
+    }else if(pontos<=5){
+      console.log("Pontos <= 5");
+      count=tempo = 15;
+      TamanhoiLvl=4;
+      TamanhojLvl=3;
+    }else if(pontos<=8){
+      console.log("Pontos <= 8");
+      count=tempo = 15;
+      TamanhoiLvl=5;
+      TamanhojLvl=4;
+    }else if(pontos<=10){
+      console.log("Pontos < 10");
+      count=tempo = 12;
+      TamanhoiLvl=8;
+      TamanhojLvl=4;
+    }else if(pontos<=20){
+      console.log("Pontos > 20");
+      count=tempo = 8;
+      TamanhoiLvl=12;
+      TamanhojLvl=5;
+    }
+  }
+  
+  </script>
+  <head>
+  <meta charset="UTF-8">
+  <title>Jogo Canvas</title>
+  <style>*{
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+  
+    body, html{
+      width: 100%;
+      height: 100%;
+      font-family: sans-serif;
+      font-size:22px;
+      line-height: 1.3;
+    }
+  
+    .bg_video{
+      position: fixed; 
+      right: 0; 
+      bottom: 0;
+      min-width: 100%; 
+      min-height: 100%;
+      width: auto; 
+      height: auto; 
+      z-index: -1000;
+    }
+
+  </style>
+  </head>
+  </head>
+  <body>
+
+  <video autoplay loop class="bg_video">
+   
+  </video>	
+
+  
+ 
+  <body onload="init();">
+  <canvas id="canvas" width="1300" height="600"></canvas>   
+  </body>
+</html>

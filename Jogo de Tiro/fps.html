@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Game Mata-Mata</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script>
+        var boneco = [];
+        var cor = [];
+        var tiros = [];
+        var PosicaoCanhao = null;
+
+        function create() {
+            PosicaoCanhao = null;
+            var ctx = canvas.getContext('2d');
+            ctx.strokeStyle = 'black'
+            ctx.beginPath();
+            capa();
+
+        }
+
+        function iniciar() {
+            document.getElementById("btnIniciar").disabled = true;
+            boneco = [];
+            cor = [];
+            tiros = [];
+            tiros.length = 0;
+            boneco.length = 0;
+            window.addEventListener('mousemove', PosicaoMouseX);
+            window.addEventListener('mousedown', gerarTiro);
+            gerarCor();
+            gerarboneco(boneco);
+            setInterval("randomInt()", 500);
+            draw();
+        }
+
+        function gerarCor() {
+            cor.push('orange');
+
+        }
+        function capa() {
+            var ctx = canvas.getContext('2d');
+            ctx.beginPath();
+            var img = new Image();
+            img.src = 'capa.png';
+            img.onload = function () {
+                ctx.drawImage(img, 1, 1, canvas.width - 2, canvas.height - 2);
+                ctx.strokeRect(0, 0, canvas.width, canvas.height);
+                ctx.stroke();
+            }
+        }
+
+        function fundo() {
+            var ctx = canvas.getContext('2d');
+            ctx.beginPath();
+            var img = new Image();
+            img.src = 'fundo.png';
+            ctx.drawImage(img, 1, 1, canvas.width - 2, canvas.height - 2);
+        }
+
+        function gerarboneco(boneco) {
+
+            var oponentes = document.getElementById('oponentes').value;
+            let rang_skin;
+
+            if (oponentes > 30)
+                oponentes = 30;
+
+            for (var i = 0; i < oponentes; i++) {
+                rang_skin = (0 - Math.floor((0 - 2) * Math.random()))
+
+                if (rang_skin == 1)
+                    rang_skin = 'tanque';
+                else
+                    rang_skin = 'soldado';
+
+                console.log(rang_skin)
+                boneco.push({
+                    posicaox: 50 + (50 * i), posicaoy: 10, cor: cor[0 - Math.floor((0 - 3) * Math.random())], velocidade: 0 - Math.floor((0.5 - 10) * Math.random())
+                    , comandoLR: 'parado', comandoWH: 'parado', estado: 'vivo', skin: rang_skin
+                });
+            }
+        }
+
+        function draw() {
+            var ctx = canvas.getContext('2d');
+            ctx.strokeStyle = 'black'
+            ctx.beginPath();
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
+            ctx.stroke();
+            andarH(ctx);
+
+            fundo();
+            andarV(ctx);
+            tiro(ctx);
+            DesenharCanhao(ctx);
+            setTimeout("draw()", 50);
+        }
+        function andarH(ctx) {
+            for (var i = 0; i < boneco.length; i++) {
+
+                if (boneco[i].posicaoy < canvas.height && boneco[i].posicaox < canvas.width && boneco[i].posicaox > 0 && boneco[i].posicaoy > 0 && boneco[i].estado == 'vivo') {
+                    ctx.beginPath();
+                    ctx.fillStyle = boneco[i].cor;
+                    if (boneco[i].comandoLR == 'esquerda') {
+                        boneco[i].posicaox -= boneco[i].velocidade;
+                        var img = new Image();
+                        if (boneco[i].skin == 'soldado')
+                            img.src = 'vivoPositivo.png';
+                        else
+                            img.src = 'tanquePositivo.png';
+                        ctx.drawImage(img, boneco[i].posicaox, boneco[i].posicaoy, 50, 50);
+                        // ctx.arc(boneco[i].posicaox, boneco[i].posicaoy, 20, 0, Math.PI * 2, true);
+                    } else if (boneco[i].comandoLR == 'direita') {
+                        boneco[i].posicaox += boneco[i].velocidade;
+                        var img = new Image();
+                        if (boneco[i].skin == 'soldado') {
+                            img.src = 'vivoNegativo.png';
+                            ctx.drawImage(img, boneco[i].posicaox, boneco[i].posicaoy, 50, 50);
+                        } else {
+                            img.src = 'tanqueNegativo.png';
+                            ctx.drawImage(img, boneco[i].posicaox, boneco[i].posicaoy, 50, 50);
+                        }
+
+                        //ctx.arc(boneco[i].posicaox, boneco[i].posicaoy, 20, 0, Math.PI * 2, true);
+                    } else {
+                        var img = new Image();
+                        if (boneco[i].skin == 'soldado')
+                            img.src = 'vivoPositivo.png';
+                        else
+                            img.src = 'tanquePositivo.png';
+                        ctx.drawImage(img, boneco[i].posicaox, boneco[i].posicaoy, 50, 50);
+                    }
+                } else if (boneco[i].posicaox < 0) {
+                    boneco[i].posicaox = 1;
+                } else if (boneco[i].posicaox >= canvas.width) {
+                    boneco[i].posicaoy = canvas.width;
+
+                } else if (boneco[i].estado == 'morto') {
+                    var img = new Image();
+                    img.src = 'rip.png';
+                    ctx.drawImage(img, boneco[i].posicaox, boneco[i].posicaoy, 50, 50);
+                }
+                ctx.fill();
+            }
+
+        }
+
+        function DesenharCanhao(ctx) {
+            ctx.beginPath();
+            var img = new Image();
+            img.src = 'canhao.png';
+            ctx.drawImage(img, PosicaoCanhao, canvas.height - 102, 100, 100);
+        }
+
+        function rotacionarImg(ctx, image, x, y, width, height, rotation) {
+            var hw = width / 2;
+            var hh = height / 2;
+
+            ctx.save();
+
+            ctx.translate(x + hw, y + hh);
+            ctx.rotate(rotation);
+            ctx.drawImage(image, -hw, -hh, width, height);
+
+            ctx.restore();
+        }
+
+        function PosicaoMouseX(evt) {
+            PosicaoCanhao = evt.x - 50;
+        }
+
+        function andarV(ctx) {
+            for (var i = 0; i < boneco.length; i++) {
+                if (boneco[i].posicaox <= 1)
+                    boneco[i].posicaox = 2;
+                if (boneco[i].posicaox >= canvas.width - 20)
+                    boneco[i].posicaox = canvas.width - 20;
+                ctx.beginPath();
+                ctx.fillStyle = boneco[i].cor;
+                if (boneco[i].posicaoy < canvas.height && boneco[i].posicaox < canvas.width && boneco[i].posicaox > 0 && boneco[i].posicaoy > 0 && boneco[i].estado == 'vivo') {
+                    var andar = boneco[i].comando;
+                    if (boneco[i].comandoLR == 'parado') {
+                        var img = new Image();
+                        if (boneco[i].skin == 'soldado')
+                            img.src = 'vivoPositivo.png';
+                        else
+                            img.src = 'tanquePositivo.png';
+                        ctx.drawImage(img, boneco[i].posicaox, boneco[i].posicaoy, 50, 50);
+                    }  //  ctx.arc(boneco[i].posicaox, boneco[i].posicaoy, 20, 0, Math.PI * 2, true); // Círculo exterio
+                    if (boneco[i].comandoWH == 'baixo') {
+
+                        boneco[i].posicaoy += boneco[i].velocidade;
+                        var img = new Image();
+                        if (boneco[i].comandoLR == 'esquerda') {
+                            if (boneco[i].skin == 'soldado')
+                                img.src = 'vivoNegativo.png';
+                            else
+                                img.src = 'tanqueNegativo.png';
+                        } else if (boneco[i].comandoLR == 'direita') {
+                            if (boneco[i].skin == 'soldado')
+                                img.src = 'vivoPositivo.png';
+                            else
+                                img.src = 'tanquePositivo.png';
+                        }
+                        ctx.drawImage(img, boneco[i].posicaox, boneco[i].posicaoy, 50, 50);
+                        // ctx.arc(boneco[i].posicaox, boneco[i].posicaoy, 20, 0, Math.PI * 2, true);
+                    } else if (boneco[i].comandoWH == 'cima') {
+                        boneco[i].posicaoy -= boneco[i].velocidade + 10;
+
+                        var img = new Image();
+                        if (boneco[i].comandoLR == 'esquerda') {
+                            if (boneco[i].skin == 'soldado')
+                                img.src = 'vivoNegativo.png';
+                            else
+                                img.src = 'tanqueNegativo.png';
+                        } else if (boneco[i].comandoLR == 'direita') {
+                            if (boneco[i].skin == 'soldado')
+                                img.src = 'vivoPositivo.png';
+                            else
+                                img.src = 'tanquePositivo.png';
+
+                        }
+
+                        ctx.drawImage(img, boneco[i].posicaox, boneco[i].posicaoy, 50, 50);
+                        //ctx.arc(boneco[i].posicaox, boneco[i].posicaoy, 20, 0, Math.PI * 2, true);
+                    }
+                } else if (boneco[i].estado == 'morto') {
+                    var img = new Image();
+                    img.src = 'rip.png';
+                    ctx.drawImage(img, boneco[i].posicaox, boneco[i].posicaoy, 50, 50);
+                }
+
+                ctx.stroke();
+                ctx.fill();
+            }
+        }
+
+        function gerarTiro(evt) {
+            tiros.push({
+                x: evt.x,
+                y: canvas.height - 100,
+                velocidade: 0 - Math.floor((0 - 5) * Math.random()),
+            });
+        }
+
+        function tiro(ctx) {
+            for (var i = 0; i < tiros.length; i++) {
+
+                if (tiros[i].y < canvas.height && tiros[i].x < canvas.width && tiros[i].x > 0 && tiros[i].y > 0) {
+
+                    for (var j = 0; j < boneco.length; j++) {
+
+                        if (((tiros[i].y + 20) < boneco[j].posicaoy) && ((tiros[i].x + 20) > boneco[j].posicaox && (tiros[i].x - 20) < boneco[j].posicaox + 20)) {
+                            console.log("Matou!");
+                            boneco[j].estado = 'morto';
+                        }
+                        ctx.beginPath();
+                        ctx.fillStyle = 'orange';
+                        ctx.arc(tiros[i].x, tiros[i].y -= tiros[i].velocidade, 8, 0, Math.PI * 2, true);
+                        ctx.fill();
+                    }
+                }
+            }
+        }
+
+        function randomInt() {
+            var min = 0;
+            var max = 100;
+
+            for (var i = 0; i < boneco.length; i++) {
+                let horizontal;
+                let vertical;
+                var _lr = min + Math.floor((max - min) * Math.random());
+                var _wh = min + Math.floor((max - min) * Math.random());
+                var mudanca = 0 - Math.floor((0 - 100) * Math.random());
+                if (mudanca > 30) {
+                    if (_lr < 40) {
+                        horizontal = 'esquerda'
+                    } else if (_lr > 60) {
+                        horizontal = 'direita'
+                    } else
+                        horizontal = 'parado'
+                    if (_wh < -20) {
+                        vertical = 'cima'
+                    } else if (_wh > 0) {
+                        vertical = 'baixo'
+                    } else
+                        andar = 'parado'
+                    boneco[i].comandoLR = horizontal;
+                    boneco[i].comandoWH = vertical;
+                }
+            }
+        }       
+    </script>
+</head>
+
+<body>
+
+    <body bgcolor="black"> </body>
+    <style>
+        body {
+            color: white;
+        }
+    </style>
+
+    <body onload="create();">
+
+
+        <canvas id="canvas" width="1200" height="900"></canvas>
+        <br>
+        <label>Quantidades de Oponentes <input type="text" id="oponentes" name="oponentes" /></label>
+        <button id="btnIniciar" onclick="iniciar();">Iniciar</button>
+    </body>
+
+</body>
+
+</html>
